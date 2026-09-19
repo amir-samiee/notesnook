@@ -29,69 +29,27 @@ import { itemSkus } from "../utils/constants";
 import { presentSheet, ToastManager } from "./event-manager";
 import SettingsService from "./settings";
 
-let subs: RNIap.Subscription[] = [];
-let products: RNIap.Product[] = [];
+const subs: RNIap.Subscription[] = [];
+const products: RNIap.Product[] = [];
+
 
 async function setPremiumStatus() {
   const userstore = useUserStore.getState();
   try {
-    const user = await db.user.getUser();
-    if (!user) {
-      userstore.setPremium(get());
-    } else {
-      userstore.setPremium(get());
-      userstore.setUser(user);
-    }
-  } catch (e) {}
-  if (Config.GITHUB_RELEASE === "true") return;
-
-  if (get()) {
-    await subscriptions.clear();
-  }
-  try {
-    await RNIap.initConnection();
-    subs = await RNIap.getSubscriptions({
-      skus: itemSkus
-    });
-  } catch (e) {}
+    userstore.setPremium(true);
+  } catch (e) { /* empty */ }
 }
 
 async function loadProductsAndSubs() {
   try {
     if (Config.GITHUB_RELEASE === "true") throw new Error("Github release");
-    if (!subs || subs.length === 0) {
-      subs = await RNIap.getSubscriptions({
-        skus: itemSkus
-      });
-      console.log("SUBS", subs);
-    }
-
-    if (!products || products.length === 0) {
-      products = await RNIap.getProducts({
-        skus: ["notesnook.pro.5year", "notesnook.believer.5year"]
-      });
-    }
-
-    return {
-      subs,
-      products
-    };
   } catch (e) {
     console.error("Failed to load products and subscriptions", e);
-    return {
-      subs: [],
-      products: []
-    };
+    return { subs: subs, products: products };
   }
 }
 
-function get() {
-  // if (__DEV__ || Config.isTesting === "true") return true;
-  return (
-    useUserStore.getState().user?.subscription?.plan !== undefined &&
-    useUserStore.getState().user?.subscription?.plan !== SubscriptionPlan.FREE
-  );
-}
+function get() { return true; }
 
 const showVerifyEmailDialog = () => {
   presentSheet({

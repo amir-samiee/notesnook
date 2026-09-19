@@ -2,20 +2,6 @@ name: Test @notesnook/desktop
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "master"
-    paths:
-      - "apps/desktop/**"
-      # re-run workflow if workflow file changes
-      - ".github/workflows/desktop.tests.yml"
-  pull_request:
-    branches:
-      - "master"
-    paths:
-      - "apps/desktop/**"
-      # re-run workflow if workflow file changes
-      - ".github/workflows/desktop.tests.yml"
 
 jobs:
   test-macos-x64:

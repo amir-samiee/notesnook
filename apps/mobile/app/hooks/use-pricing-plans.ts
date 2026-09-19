@@ -219,7 +219,7 @@ const usePricingPlans = (options?: PricingPlansOptions) => {
       if (isGithubRelease) {
         if (
           user?.subscription?.trialsAvailed?.some(
-            (plan) => plan === planIdToIndex(planId || currentPlan)
+            (plan: number) => plan === planIdToIndex(planId || currentPlan)
           )
         ) {
           return false;
@@ -230,18 +230,18 @@ const usePricingPlans = (options?: PricingPlansOptions) => {
 
       return Platform.OS === "ios"
         ? (
-            getProduct(
-              planId || currentPlan,
-              productId || selectedProductSku
-            ) as RNIap.SubscriptionIOS
-          )?.introductoryPricePaymentModeIOS === "FREETRIAL"
+          getProduct(
+            planId || currentPlan,
+            productId || selectedProductSku
+          ) as RNIap.SubscriptionIOS
+        )?.introductoryPricePaymentModeIOS === "FREETRIAL"
         : (
-            getProduct(
-              planId || currentPlan,
-              productId || selectedProductSku
-            ) as RNIap.SubscriptionAndroid
-          )?.subscriptionOfferDetails?.[0]?.pricingPhases?.pricingPhaseList
-            ?.length > 1;
+          getProduct(
+            planId || currentPlan,
+            productId || selectedProductSku
+          ) as RNIap.SubscriptionAndroid
+        )?.subscriptionOfferDetails?.[0]?.pricingPhases?.pricingPhaseList
+          ?.length > 1;
     },
     [
       currentPlan,
@@ -262,13 +262,13 @@ const usePricingPlans = (options?: PricingPlansOptions) => {
           plan.products = {};
           plan.subscriptionSkuList.forEach((sku) => {
             if (!plan.subscriptions) plan.subscriptions = {};
-            plan.subscriptions[sku] = items.subs.find(
+            if (items) plan.subscriptions[sku] = items.subs.find(
               (p) => p.productId === sku
             );
           });
           plan.productSkuList.forEach((sku) => {
             if (!plan.products) plan.products = {};
-            plan.products[sku] = items.products.find(
+            if (items) plan.products[sku] = items.products.find(
               (p) => p.productId === sku
             );
           });
@@ -283,13 +283,10 @@ const usePricingPlans = (options?: PricingPlansOptions) => {
             const products = WebPlanCache || (await db.pricing.products());
             WebPlanCache = products;
             setWebPricingPlans(products);
-          } catch (e) {
-            /**
-          empty */
-          }
+          } catch (e) { /* empty */ }
         }
         setLoadingPlans(false);
-      } catch (e) {}
+      } catch (e) { /* empty */ }
     };
     loadPlans();
   }, [options?.promoOffer, cancelPromo, hasTrialOffer]);
@@ -302,15 +299,13 @@ const usePricingPlans = (options?: PricingPlansOptions) => {
     if (Platform.OS === "android") {
       if (isGithubRelease) {
         if (!(product as Plan)?.price) return null;
-        return `${
-          (product as Plan).currencySymbol || (product as Plan).currency
-        } ${
-          (product as Plan).period === "yearly"
+        return `${(product as Plan).currencySymbol || (product as Plan).currency
+          } ${(product as Plan).period === "yearly"
             ? (product as Plan).price.gross
             : (product as Plan).period === "5-year"
               ? (product as Plan).price.gross
               : (product as Plan).price.gross
-        }`;
+          }`;
       }
 
       const pricingPhaseListItem =
@@ -387,11 +382,11 @@ const usePricingPlans = (options?: PricingPlansOptions) => {
           andDangerouslyFinishTransactionAutomaticallyIOS: false,
           subscriptionOffers: androidOfferToken
             ? [
-                {
-                  offerToken: androidOfferToken,
-                  sku: product?.productId
-                }
-              ]
+              {
+                offerToken: androidOfferToken,
+                sku: product?.productId
+              }
+            ]
             : undefined
         });
         if (
@@ -426,25 +421,25 @@ const usePricingPlans = (options?: PricingPlansOptions) => {
 
     const cycleText = isMonthly
       ? promoCyclesMonthly[
-          (Platform.OS === "android"
-            ? (product as RNIap.SubscriptionAndroid)
-                ?.subscriptionOfferDetails[0]?.pricingPhases
-                .pricingPhaseList?.[0].billingCycleCount
-            : parseInt(
-                (product as RNIap.SubscriptionIOS)
-                  .introductoryPriceNumberOfPeriodsIOS as string
-              )) as keyof typeof promoCyclesMonthly
-        ]
+      (Platform.OS === "android"
+        ? (product as RNIap.SubscriptionAndroid)
+          ?.subscriptionOfferDetails[0]?.pricingPhases
+          .pricingPhaseList?.[0].billingCycleCount
+        : parseInt(
+          (product as RNIap.SubscriptionIOS)
+            .introductoryPriceNumberOfPeriodsIOS as string
+        )) as keyof typeof promoCyclesMonthly
+      ]
       : promoCyclesYearly[
-          (Platform.OS === "android"
-            ? (product as RNIap.SubscriptionAndroid)
-                ?.subscriptionOfferDetails[0]?.pricingPhases
-                .pricingPhaseList?.[0].billingCycleCount
-            : parseInt(
-                (product as RNIap.SubscriptionIOS)
-                  .introductoryPriceNumberOfPeriodsIOS as string
-              )) as keyof typeof promoCyclesYearly
-        ];
+      (Platform.OS === "android"
+        ? (product as RNIap.SubscriptionAndroid)
+          ?.subscriptionOfferDetails[0]?.pricingPhases
+          .pricingPhaseList?.[0].billingCycleCount
+        : parseInt(
+          (product as RNIap.SubscriptionIOS)
+            .introductoryPriceNumberOfPeriodsIOS as string
+        )) as keyof typeof promoCyclesYearly
+      ];
 
     return cycleText;
   }
@@ -634,15 +629,13 @@ const usePricingPlans = (options?: PricingPlansOptions) => {
 
     if (isGithubRelease) {
       if (!(product as Plan)?.price) return null;
-      return `${
-        (product as Plan).currencySymbol || (product as Plan).currency
-      } ${
-        (product as Plan).period === "yearly"
+      return `${(product as Plan).currencySymbol || (product as Plan).currency
+        } ${(product as Plan).period === "yearly"
           ? ((product as Plan).price.gross / 12).toFixed(2)
           : (product as Plan).period === "5-year"
             ? ((product as Plan).price.gross / (12 * 5)).toFixed(2)
             : (product as Plan).price.gross
-      }`;
+        }`;
     }
 
     const androidPricingPhase = (product as RNIap.SubscriptionAndroid)
@@ -653,17 +646,17 @@ const usePricingPlans = (options?: PricingPlansOptions) => {
     const { localizedPrice, priceSymbol, priceValue } = getPriceParts(
       Platform.OS === "android"
         ? parseInt(
-            androidPricingPhase?.priceAmountMicros ||
-              (product as RNIap.ProductAndroid)?.oneTimePurchaseOfferDetails
-                ?.priceAmountMicros ||
-              "0"
-          )
+          androidPricingPhase?.priceAmountMicros ||
+          (product as RNIap.ProductAndroid)?.oneTimePurchaseOfferDetails
+            ?.priceAmountMicros ||
+          "0"
+        )
         : parseInt((product as RNIap.SubscriptionIOS).price),
       Platform.OS === "android"
         ? androidPricingPhase?.formattedPrice ||
-            (product as RNIap.ProductAndroid).oneTimePurchaseOfferDetails
-              ?.formattedPrice ||
-            "0"
+        (product as RNIap.ProductAndroid).oneTimePurchaseOfferDetails
+          ?.formattedPrice ||
+        "0"
         : (product as RNIap.SubscriptionIOS).localizedPrice
     );
 
@@ -671,11 +664,11 @@ const usePricingPlans = (options?: PricingPlansOptions) => {
       !(product as RNIap.Subscription)?.productId.includes("5year")
       ? getLocalizedPrice(product as RNIap.Subscription)
       : convertPrice(
-          priceValue,
-          priceSymbol,
-          localizedPrice.startsWith(priceSymbol),
-          annualBilling ? 12 : 60
-        );
+        priceValue,
+        priceSymbol,
+        localizedPrice.startsWith(priceSymbol),
+        annualBilling ? 12 : 60
+      );
   };
 
   function isSubscribedToPlan(planId: string) {

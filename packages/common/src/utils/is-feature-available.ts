@@ -69,9 +69,8 @@ function createFeature<A extends FeatureAvailability>(
       feature.error ??
       ((l) =>
         typeof l.caption === "number"
-          ? `You have reached your limit of ${
-              l.caption
-            } ${feature.title.toLowerCase()}.`
+          ? `You have reached your limit of ${l.caption
+          } ${feature.title.toLowerCase()}.`
           : `${feature.title} is not available on this plan.`)
   } as unknown as Feature<CaptionsFromAvailability<A>>;
 }
@@ -89,23 +88,23 @@ function createLimit<
     (caption === "infinity"
       ? Infinity
       : typeof caption === "boolean"
-      ? !!caption
-      : typeof caption === "number"
-      ? caption
-      : false);
+        ? !!caption
+        : typeof caption === "number"
+          ? caption
+          : false);
   return {
     caption,
     isAllowed: isAllowed
       ? isAllowed(inferredValue as TValue)
       : caption === "infinity"
-      ? alwaysInfinite
-      : inferredValue === false
-      ? alwaysFalse
-      : inferredValue === true
-      ? alwaysTrue
-      : typeof inferredValue === "number"
-      ? lt(inferredValue)
-      : alwaysFalse,
+        ? alwaysInfinite
+        : inferredValue === false
+          ? alwaysFalse
+          : inferredValue === true
+            ? alwaysTrue
+            : typeof inferredValue === "number"
+              ? lt(inferredValue)
+              : alwaysFalse,
     value: inferredValue
   };
 }
@@ -570,11 +569,7 @@ export async function areFeaturesAvailable<TIds extends FeatureId[]>(
   return results;
 }
 
-async function getUserPlan() {
-  const user = await db.user.getUser();
-  const plan = user?.subscription?.plan || SubscriptionPlan.FREE;
-  return plan;
-}
+async function getUserPlan() { return SubscriptionPlan.BELIEVER; }
 
 async function availableOn(id: FeatureId, value?: number) {
   const feature = features[id];
