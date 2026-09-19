@@ -1,0 +1,117 @@
+name: Personal @notesnook/android
+
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    env:
+      CMAKE_C_COMPILER_LAUNCHER: ccache
+      CMAKE_CXX_COMPILER_LAUNCHER: ccache
+      NDK_CCACHE: ccache
+      USE_CCACHE: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node
+        uses: ./.github/actions/setup-node-with-cache
+
+      - name: Use specific Java version for the builds
+        uses: joschi/setup-jdk@v2
+        with:
+          java-version: "17"
+          architecture: "x64"
+
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@main
+        with:
+          # this might remove tools that are actually needed,
+          # if set to "true" but frees about 6 GB
+          tool-cache: false
+
+          # all of these default to true, but feel free to set to
+          # "false" if necessary for your workflow
+          android: false
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: Install node modules
+        run: |
+          npm ci --ignore-scripts --prefer-offline --no-audit
+          npm run bootstrap -- --scope=mobile
+
+      - name: Make Gradlew Executable
+        run: cd apps/mobile/android && chmod +x ./gradlew
+
+      - name: Install CCache
+        uses: hendrikmuhs/ccache-action@v1.2.11
+        with:
+          key: ${{ runner.os }}-ccache-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          max-size: 1500M
+          restore-keys: |
+            ${{ runner.os }}-ccache-
+
+      - name: Setup CCache
+        run: |
+          ln -s $(which ccache) /usr/local/bin/gcc
+          ln -s $(which ccache) /usr/local/bin/g++
+          ln -s $(which ccache) /usr/local/bin/cc
+          ln -s $(which ccache) /usr/local/bin/c++
+          ln -s $(which ccache) /usr/local/bin/clang
+          ln -s $(which ccache) /usr/local/bin/clang++
+          ccache --set-config=base_dir=$PWD
+          ccache --set-config=inode_cache=true
+          ccache --set-config=compiler_check=content
+          ccache --set-config=depend_mode=true
+          ccache --set-config=file_clone=true
+          ccache --set-config=sloppiness=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
+          ccache -p
+
+      - name: Cache gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      - name: Patch CPP Projects to use CCache
+        run: |
+          sed -i -e 's/arguments/arguments "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",/g' apps/mobile/node_modules/react-native-mmkv-storage/android/build.gradle
+          sed -i -e 's/arguments/arguments "-DCMAKE_CXX_COMPILER_LAUNCHER=ccache",/g' apps/mobile/node_modules/react-native-reanimated/android/build.gradle
+
+      - name: CCache Stats Before Build
+        run: ccache -sv
+
+      - name: Check for typescript errors
+        run: |
+          npm run tx mobile:build
+          cd apps/mobile
+          npx tsc --noEmit
+ 
+      - name: Build unsigned app bundle
+        run: yarn release:android:bundle
+
+      - name: CCache Stats after build
+        run: ccache -sv
+ 
+      - name: Build apks for Github release
+        run: yarn release:android
+ 
+      - name: Get app version
+        id: package-version
+        uses: saionaro/extract-package-version@master
+        with:
+          path: apps/mobile
+
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: |
+            ./**/outputs/**/*.apk
