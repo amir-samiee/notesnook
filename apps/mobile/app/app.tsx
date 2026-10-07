@@ -16,8 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { i18n } from "@lingui/core";
-import { I18nProvider } from "@lingui/react";
 import {
   ScopedThemeProvider,
   THEME_COMPATIBILITY_VERSION,
@@ -50,6 +48,7 @@ import {
   registerAppShortcuts
 } from "./hooks/use-shortcut-manager";
 import Shortcuts from "react-native-actions-shortcuts";
+import { parseInternalLink } from "@notesnook/core";
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 I18nManager.swapLeftAndRightInRTL(false);
@@ -144,11 +143,11 @@ export const withTheme = (
             if (theme) {
               theme.colorScheme === "dark"
                 ? useThemeStore.setState({
-                    darkTheme: theme
-                  })
+                  darkTheme: theme
+                })
                 : useThemeStore.setState({
-                    lightTheme: theme
-                  });
+                  lightTheme: theme
+                });
             }
           })
           .catch(() => {
@@ -179,11 +178,7 @@ export const withTheme = (
       }
     }, [colorScheme, darkTheme, lightTheme]);
 
-    return (
-      <I18nProvider i18n={i18n}>
-        <Element {...props} />
-      </I18nProvider>
-    );
+    return <Element {...props} />;
   };
 };
 
@@ -200,9 +195,12 @@ export const withStartupBoundry = (
             Linking.getInitialURL(),
             Shortcuts.getInitialShortcut()
           ]);
-          console.log(url, shortcut);
-          if (shortcut?.type === "notesnook.action.newnote") {
-            launchNewNoteTab();
+          const parsedLink = url ? parseInternalLink(url) : undefined;
+          if (
+            shortcut?.type === "notesnook.action.newnote" ||
+            parsedLink?.type === "note"
+          ) {
+            launchNewNoteTab(parsedLink?.id);
           }
           useSettingStore.setState({
             initialUrl: url,

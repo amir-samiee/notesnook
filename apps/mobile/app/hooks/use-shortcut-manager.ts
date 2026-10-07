@@ -31,7 +31,7 @@ export function isShortcutsSupported() {
   return Platform.OS !== "android" || deviceInfoModule.getApiLevelSync() > 25;
 }
 
-const defaultShortcuts: ShortcutItem[] = [
+const getDefaultShortcuts = (): ShortcutItem[] => [
   {
     type: "notesnook.action.newnote",
     title: strings.createNewNote(),
@@ -47,7 +47,7 @@ const defaultShortcuts: ShortcutItem[] = [
 ];
 
 export function registerAppShortcuts(
-  shortcuts: ShortcutItem[] = defaultShortcuts
+  shortcuts: ShortcutItem[] = getDefaultShortcuts()
 ) {
   if (!isShortcutsSupported()) return;
   Shortcuts.setShortcuts(shortcuts);
@@ -66,18 +66,18 @@ export function initShortcutListener() {
   );
 }
 
-export function launchNewNoteTab() {
-  let tabId;
+export function launchNewNoteTab(noteId?: string) {
   const currentTab = useTabStore
     .getState()
     .getTab(useTabStore.getState().currentTab as string);
 
   if (useTabStore.getState().tabs.length === 0 || currentTab?.pinned) {
-    tabId = useTabStore.getState().newTab();
+    useTabStore.getState().newTab();
   } else {
-    tabId = useTabStore.getState().currentTab;
-    if (useTabStore.getState().getTab(tabId)?.session?.noteId) {
-      useTabStore.getState().newTabSession(tabId, {});
+    if (currentTab && currentTab?.session?.noteId !== noteId) {
+      useTabStore.getState().newTabSession(currentTab?.id, {
+        noteId: noteId
+      });
     }
   }
 }
