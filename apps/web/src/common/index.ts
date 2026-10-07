@@ -138,19 +138,40 @@ export async function createBackup(
     action: async (report) => {
       const { createZipStream } = await import("../utils/streams/zip-stream");
       const writeStream = await createWritableStream(filePath);
-      const files = backupToZipFiles(
-        { encrypt: encryptedBackups, mode, background },
-        report
-      );
-      await new ReadableStream<ZipFile>(
-        {
-          async pull(controller) {
-            const { value, done } = await files.next();
-            if (done) controller.close();
-            else controller.enqueue(value);
-          },
-          async cancel() {
-            await files.return(undefined);
+      await new ReadableStream<ZipFile>({
+        start() { },
+        async pull(controller) {
+          for await (const output of db.backup!.export({
+            type: "web",
+            encrypt: encryptedBackups,
+            mode
+          })) {
+            if (output.type === "file") {
+              const file = output;
+              report({
+                text: background
+                  ? strings.creatingBackupNamed(file.path)
+                  : strings.savingFile(file.path)
+              });
+              controller.enqueue({
+                path: file.path,
+                data: encoder.encode(file.data)
+              });
+            } else if (output.type === "attachment") {
+              report({
+                text: background
+                  ? strings.creatingBackupNamed(output.hash)
+                  : strings.savingAttachment(output.hash),
+                total: output.total,
+                current: output.current
+              });
+              const handle = await streamablefs.readFile(output.hash);
+              if (!handle) continue;
+              controller.enqueue({
+                path: output.path,
+                data: handle.readable
+              });
+            }
           }
         },
         { highWaterMark: 0 }

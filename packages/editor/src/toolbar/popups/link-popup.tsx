@@ -29,6 +29,7 @@ import { findMark, selectionToOffset } from "../../utils/prosemirror.js";
 import { Editor, getMarkAttributes } from "@tiptap/core";
 import { strings } from "@notesnook/intl";
 import { useState } from "react";
+import { test } from "linkifyjs";
 
 export type LinkPopupProps = {
   link?: LinkDefinition;
@@ -50,22 +51,11 @@ export function LinkPopup(props: LinkPopupProps) {
 
   const handleDone = () => {
     const href = link.current?.href?.trim();
-    if (!href) {
+    if (!href || (!isInternalLink(href) && !test(href))) {
       setError(strings.enterValidUrl());
       return;
     }
-
-    if (isInternalLink(href)) {
-      onDone(link.current);
-      return;
-    }
-
-    try {
-      const url = new URL(href);
-      onDone({ ...link.current, href: url.href });
-    } catch {
-      setError(strings.enterValidUrl());
-    }
+    onDone(link.current);
   };
 
   return (
@@ -126,7 +116,7 @@ export function LinkPopup(props: LinkPopupProps) {
           autoFocus
           placeholder="https://example.com/"
           defaultValue={link.current?.href}
-          variant={error ? "error" : "input"}
+          variant={error ? "error" : undefined}
           onChange={(e) => {
             if (error) setError(null);
             link.current = { ...link.current, href: e.target.value };

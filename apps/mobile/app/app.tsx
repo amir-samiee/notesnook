@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-import { parseInternalLink } from "@notesnook/core";
 import {
   ScopedThemeProvider,
   THEME_COMPATIBILITY_VERSION,
@@ -40,15 +39,8 @@ import {
   launchNewNoteTab,
   registerAppShortcuts
 } from "./hooks/use-shortcut-manager";
-import { RootNavigation } from "./navigation/navigation-stack";
-import { NotePreviewConfigure } from "./screens/note-preview-configure";
-import { themeTrpcClient } from "./screens/settings/theme-selector";
-import Notifications from "./services/notifications";
-import SettingsService from "./services/settings";
-import { TipManager } from "./services/tip-manager";
-import { useSettingStore } from "./stores/use-setting-store";
-import { changeSystemBarColors, useThemeStore } from "./stores/use-theme-store";
-import { useUserStore } from "./stores/use-user-store";
+import Shortcuts from "react-native-actions-shortcuts";
+import { parseInternalLink } from "@notesnook/core";
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 I18nManager.swapLeftAndRightInRTL(false);

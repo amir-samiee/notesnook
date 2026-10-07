@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "POT-Creation-Date: 2026-06-16 12:53+0500\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
 "Language: pl\n"
@@ -11,9 +11,7 @@ msgstr ""
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Language: pl_PL\n"
-"X-Source-Language: C\n"
+"Plural-Forms: \n"
 
 #: src/strings.ts:134
 msgid " Unlock with password once to enable biometric access."
@@ -520,7 +518,7 @@ msgstr "{count, plural, one {Usunięto wersję} few {Usunięto # wersje} many {U
 
 #: src/strings.ts:2272
 msgid "{count} characters"
-msgstr "{count} znaków"
+msgstr "Znaki: {count}"
 
 #: src/strings.ts:3171
 msgid "{count} stars"
@@ -676,7 +674,7 @@ msgstr "@andrewsayer na Twitterze"
 
 #: src/strings.ts:3067
 msgid "* 2FA via email is enabled by default for all users"
-msgstr "* Uwierzytelnienie dwuskładnikowe przez e-mail jest domyślnie włączone dla wszystkich użytkowników"
+msgstr "* 2FA przez e-mail jest domyślnie włączone dla wszystkich użytkowników"
 
 #: src/strings.ts:3057
 msgid "* Disable sync completely, turn off auto sync, or just disable real-time editor sync."
@@ -1146,7 +1144,7 @@ msgstr "Stosowanie kodu kuponu..."
 #: src/strings.ts:1416
 #: src/strings.ts:2259
 msgid "Archive"
-msgstr "Archiwum"
+msgstr "Archiwizuj"
 
 #: src/strings.ts:1337
 #: src/strings.ts:2634
@@ -3060,7 +3058,7 @@ msgstr "Nieprawidłowy adres e-mail lub hasło"
 
 #: src/strings.ts:1161
 msgid "Email support"
-msgstr "Wsparcie e-mail"
+msgstr "Wsparcie e-mailowe"
 
 #: src/strings.ts:781
 msgid "Email updated to {email}"
@@ -4230,7 +4228,7 @@ msgstr "Importowanie notatek z {provider}"
 
 #: src/strings.ts:3062
 msgid "Improve your account security & prevent intruders from accessing your notes using 2FA."
-msgstr "Popraw bezpieczeństwo swojego konta i zablokuj dostęp intruzom za pomocą uwierzytelnienia dwuskładnikowego."
+msgstr "Popraw bezpieczeństwo swojego konta i uniemożliwiaj intruzom dostęp do Twoich notatek za pomocą 2FA."
 
 #: src/strings.ts:2747
 msgid "Inactive"
@@ -4258,7 +4256,7 @@ msgstr "Klucze PGP skrzynki odbiorczej"
 
 #: src/strings.ts:156
 msgid "Incoming"
-msgstr "Przychodząca"
+msgstr "Przychodzące"
 
 #: src/strings.ts:1683
 msgid "Incoming note"
@@ -4758,7 +4756,7 @@ msgstr "Logowanie"
 
 #: src/strings.ts:95
 msgid "Login"
-msgstr "Zaloguj"
+msgstr "Zaloguj się"
 
 #: src/strings.ts:824
 msgid "Login required"
@@ -4790,7 +4788,7 @@ msgstr "Zaloguj się na swoje konto"
 
 #: src/strings.ts:706
 msgid "Logout"
-msgstr "Wyloguj"
+msgstr "Wyloguj się"
 
 #: src/strings.ts:530
 msgid "Logout and clear data"
@@ -5902,8 +5900,8 @@ msgid "Please enter your vault password to continue"
 msgstr "Wpisz hasło sejfu, aby kontynuować"
 
 #: src/strings.ts:1440
-msgid "Please grant notifications permission to receive reminder notifications."
-msgstr "Przyznaj uprawnienie do powiadomień, aby otrzymywać powiadomienia o przypomnieniach."
+msgid "Please grant notifications permission to add new reminders."
+msgstr "Przyznaj uprawnienie do powiadomień, aby dodawać nowe przypomnienia."
 
 #: src/strings.ts:2510
 msgid "Please login to download attachments."
@@ -6470,7 +6468,7 @@ msgstr "Przypomnij za {minutes} min"
 
 #: src/strings.ts:848
 msgid "Remind me"
-msgstr "Przypomnienie"
+msgstr "Przypomnij mi"
 
 #: src/strings.ts:331
 msgid "Remind me in"
@@ -6969,7 +6967,7 @@ msgstr "Szukaj notatek, notatników i tagów..."
 
 #: src/strings.ts:1424
 msgid "Search in {routeName}"
-msgstr "Szukaj w {routeName}"
+msgstr "Szukaj w: {routeName}"
 
 #: src/strings.ts:2661
 msgid "Search in all notes"
@@ -7045,7 +7043,7 @@ msgstr "Szukaj motywów"
 
 #: src/strings.ts:1397
 msgid "Searching for {query}..."
-msgstr "Wyszukiwanie {query}..."
+msgstr "Wyszukiwanie: {query}..."
 
 #: src/strings.ts:3047
 msgid "Secure app lock for all"
@@ -7705,11 +7703,11 @@ msgstr "Synchronizuj"
 
 #: src/strings.ts:350
 msgid "Sync failed"
-msgstr "Błąd synchronizacji"
+msgstr "Synchronizacja nie powiodła się"
 
 #: src/strings.ts:2906
 msgid "Sync failed to complete. Please try again."
-msgstr "Błąd synchronizacji. Spróbuj ponownie."
+msgstr "Synchronizacja nie powiodła się. Spróbuj ponownie."
 
 #: src/strings.ts:1267
 msgid "Sync is disabled"

@@ -101,17 +101,6 @@ Github Release: ${Config.GITHUB_RELEASE === "true" ? "Yes" : "No"}`,
         });
         return;
       }
-      if ("error" in issueReportResponse.current) {
-        const { error } = issueReportResponse.current;
-        issueReportResponse.current = undefined;
-        setLoading(false);
-        ToastManager.show({
-          heading: error,
-          type: "error",
-          context: "local"
-        });
-        return;
-      }
       setLoading(false);
       body.reset();
       title.reset();
