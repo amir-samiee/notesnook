@@ -4513,6 +4513,17 @@ msgstr "Last"
 msgid "Last edited at"
 msgstr "Last edited at"
 
+<<<<<<< HEAD
+=======
+#: src/strings.ts:3284
+msgid "Last full backup: {date}"
+msgstr "Last full backup: {date}"
+
+#: src/strings.ts:3285
+msgid "Last partial backup: {date}"
+msgstr "Last partial backup: {date}"
+
+>>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 #: src/strings.ts:2469
 msgid "Last used on"
 msgstr "Last used on"
@@ -5181,6 +5192,13 @@ msgstr "Newly created notes will be uncategorized"
 msgid "Next"
 msgstr "Next"
 
+<<<<<<< HEAD
+=======
+#: src/strings.ts:3280
+msgid "Next full backup: {date}"
+msgstr "Next full backup: {date}"
+
+>>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 #: src/strings.ts:2174
 msgid "Next match"
 msgstr "Next match"
@@ -5189,6 +5207,13 @@ msgstr "Next match"
 msgid "Next month"
 msgstr "Next month"
 
+<<<<<<< HEAD
+=======
+#: src/strings.ts:3281
+msgid "Next partial backup: {date}"
+msgstr "Next partial backup: {date}"
+
+>>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 #: src/strings.ts:2220
 msgid "Next tab"
 msgstr "Next tab"
@@ -5901,8 +5926,13 @@ msgid "Please enter your vault password to continue"
 msgstr "Please enter your vault password to continue"
 
 #: src/strings.ts:1440
+<<<<<<< HEAD
 msgid "Please grant notifications permission to add new reminders."
 msgstr "Please grant notifications permission to add new reminders."
+=======
+msgid "Please grant notifications permission to receive reminder notifications."
+msgstr "Please grant notifications permission to receive reminder notifications."
+>>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 
 #: src/strings.ts:2510
 msgid "Please login to download attachments."

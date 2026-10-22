@@ -104,6 +104,8 @@ export class HTMLRewriter {
 
           if (this.skippedTags.pop()) return;
 
+          if (!isImplied) this.closeTag();
+
           // an implied close right after the open tag is a void or
           // self-closing element; otherwise the element had content.
           const selfClose = isImplied && this.currentTag !== null;

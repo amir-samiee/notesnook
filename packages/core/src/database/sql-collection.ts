@@ -63,8 +63,7 @@ export const MAX_SQL_PARAMETERS = 200;
 export class SQLCollection<
   TCollectionType extends keyof DatabaseSchema,
   T extends DatabaseSchema[TCollectionType] = DatabaseSchema[TCollectionType]
-> implements DatabaseCollection<SQLiteItem<T>, true>
-{
+> implements DatabaseCollection<SQLiteItem<T>, true> {
   constructor(
     private readonly db: DatabaseAccessor,
     _startTransaction: (
@@ -73,13 +72,13 @@ export class SQLCollection<
     public readonly type: TCollectionType,
     private readonly eventManager: EventManager,
     private readonly sanitizer: Sanitizer
-  ) {}
+  ) { }
 
   async clear() {
     await this.db().deleteFrom(this.type).execute();
   }
 
-  async init() {}
+  async init() { }
 
   async upsert(item: SQLiteItem<T>) {
     if (!item.id) throw new Error("The item must contain the id field.");
@@ -338,9 +337,8 @@ export class SQLCollection<
         .orderBy("id asc")
         .$if(lastRow !== null, (qb) =>
           qb.where(
-            sql<boolean>`(IFNULL(dateCreated, 0), id) > (${
-              lastRow!.dateCreated ?? 0
-            }, ${lastRow!.id})`
+            sql<boolean>`(IFNULL(dateCreated, 0), id) > (${lastRow!.dateCreated ?? 0
+              }, ${lastRow!.id})`
           )
         )
         .selectAll()
@@ -591,9 +589,8 @@ export class FilteredSelector<T extends Item> {
             .orderBy("id asc")
             .$if(lastRow !== null, (qb) =>
               qb.where(
-                sql<boolean>`(IFNULL(dateCreated, 0), id) > (${
-                  lastRow.dateCreated ?? 0
-                }, ${lastRow.id})`
+                sql<boolean>`(IFNULL(dateCreated, 0), id) > (${lastRow.dateCreated ?? 0
+                  }, ${lastRow.id})`
               )
             )
             .limit(thisArg.batchSize)
@@ -630,96 +627,118 @@ export class FilteredSelector<T extends Item> {
           "desc"
         );
 
-      // order by group first so items of the same group stay together
-      if (groupKey) qb = qb.orderBy(...groupKey);
+      for (const item of sortBy) {
+        if (item === "title") {
+          qb = qb.orderBy(
+            options.sortBy !== "title"
+              ? sql`substring(ltrim(title, ' \u00a0\r\n\t\v'), 1, 1) COLLATE NOCASE`
+              : sql`natural_key(ltrim(title, ' \u00a0\r\n\t\v')) COLLATE NOCASE`,
+            options.sortDirection
+          );
+        } else {
+          const timeFormat = isGroupOptions(options)
+            ? formats[options.groupBy]
+            : null;
+          if (!timeFormat || isSortByDate(options)) {
+            if (item === "dueDate") {
+              if (hasDueDate)
+                qb = qb.orderBy(item as any, options.sortDirection);
+              else
+                qb = qb.orderBy(
+                  (qb) => qb.parens(createUpcomingReminderTimeQuery()),
+                  options.sortDirection
+                );
+            } else if (item !== "relevance")
+              qb = qb.orderBy(item, options.sortDirection);
+            continue;
+          }
 
-      if (options.sortBy === "title")
-        qb = qb.orderBy(
-          sql`natural_key(ltrim(title, ' \u00a0\r\n\t\v')) COLLATE NOCASE`,
-          options.sortDirection
-        );
-      else if (options.sortBy === "dueDate" && hasDueDate)
-        qb = qb.orderBy("dueDate" as any, options.sortDirection);
-      else if (options.sortBy === "dueDate")
-        qb = qb.orderBy(
-          (qb) => qb.parens(createUpcomingReminderTimeQuery()),
-          options.sortDirection
-        );
-      else if (options.sortBy !== "relevance")
-        qb = qb.orderBy(options.sortBy, options.sortDirection);
-      return qb;
-    };
-  }
-}
+          if (options.sortBy === "title")
+            qb = qb.orderBy(
+              sql`natural_key(ltrim(title, ' \u00a0\r\n\t\v')) COLLATE NOCASE`,
+              options.sortDirection
+            );
+          else if (options.sortBy === "dueDate" && hasDueDate)
+            qb = qb.orderBy("dueDate" as any, options.sortDirection);
+          else if (options.sortBy === "dueDate")
+            qb = qb.orderBy(
+              (qb) => qb.parens(createUpcomingReminderTimeQuery()),
+              options.sortDirection
+            );
+          else if (options.sortBy !== "relevance")
+            qb = qb.orderBy(options.sortBy, options.sortDirection);
+          return qb;
+        };
+      }
+    }
 
-// must match the group keys in `createKeySelector`
-function buildGroupKey(
-  options: GroupOptions
-): [RawBuilder<unknown>, "asc" | "desc"] | undefined {
-  const { groupBy, sortBy } = options;
-  if (groupBy === "abc")
-    return sortBy === "title"
-      ? undefined
-      : [
-          sql`substring(ltrim(title, ' \u00a0\r\n\t\v'), 1, 1) COLLATE NOCASE`,
-          "asc"
+    // must match the group keys in `createKeySelector`
+    function buildGroupKey(
+      options: GroupOptions
+    ): [RawBuilder<unknown>, "asc" | "desc"] | undefined {
+      const { groupBy, sortBy } = options;
+      if (groupBy === "abc")
+        return sortBy === "title"
+          ? undefined
+          : [
+            sql`substring(ltrim(title, ' \u00a0\r\n\t\v'), 1, 1) COLLATE NOCASE`,
+            "asc"
+          ];
+
+      // date sorts already keep date groups together
+      if (groupBy === "none" || sortBy === "relevance" || isSortByDate(options))
+        return;
+
+      if (groupBy === "default") {
+        const lastWeek = Date.now() - WEEK_MS;
+        return [
+          sql`CASE WHEN dateCreated > ${lastWeek} THEN 2 WHEN dateCreated > ${lastWeek - WEEK_MS
+            } THEN 1 ELSE 0 END`,
+          "desc"
         ];
+      }
+      return [
+        sql`strftime(${formats[groupBy]}, dateCreated / 1000, 'unixepoch', 'localtime')`,
+        "desc"
+      ];
+    }
 
-  // date sorts already keep date groups together
-  if (groupBy === "none" || sortBy === "relevance" || isSortByDate(options))
-    return;
+    function isSortByDate(options: SortOptions | GroupOptions) {
+      return (
+        options.sortBy === "dateCreated" ||
+        options.sortBy === "dateEdited" ||
+        options.sortBy === "dateDeleted" ||
+        options.sortBy === "dateModified" ||
+        options.sortBy === "dateUploaded" ||
+        options.sortBy === "dueDate"
+      );
+    }
 
-  if (groupBy === "default") {
-    const lastWeek = Date.now() - WEEK_MS;
-    return [
-      sql`CASE WHEN dateCreated > ${lastWeek} THEN 2 WHEN dateCreated > ${
-        lastWeek - WEEK_MS
-      } THEN 1 ELSE 0 END`,
-      "desc"
-    ];
-  }
-  return [
-    sql`strftime(${formats[groupBy]}, dateCreated / 1000, 'unixepoch', 'localtime')`,
-    "desc"
-  ];
-}
+    const BASE_FIELDS: SortOptions["sortBy"][] = ["dateCreated", "dateModified"];
+    const VALID_SORT_OPTIONS: Record<
+      keyof DatabaseSchema,
+      SortOptions["sortBy"][]
+    > = {
+      reminders: ["dueDate", "title"],
+      tags: ["title"],
+      attachments: ["filename", "dateUploaded", "size"],
+      colors: ["title"],
+      notebooks: ["title", "dateDeleted", "dateEdited"],
+      notes: ["title", "dateDeleted", "dateEdited"],
 
-function isSortByDate(options: SortOptions | GroupOptions) {
-  return (
-    options.sortBy === "dateCreated" ||
-    options.sortBy === "dateEdited" ||
-    options.sortBy === "dateDeleted" ||
-    options.sortBy === "dateModified" ||
-    options.sortBy === "dateUploaded" ||
-    options.sortBy === "dueDate"
-  );
-}
+      content: [],
+      notehistory: [],
+      relations: [],
+      sessioncontent: [],
+      settings: [],
+      shortcuts: [],
+      vaults: [],
+      monographs: [],
+      inboxitemshistory: []
+    };
 
-const BASE_FIELDS: SortOptions["sortBy"][] = ["dateCreated", "dateModified"];
-const VALID_SORT_OPTIONS: Record<
-  keyof DatabaseSchema,
-  SortOptions["sortBy"][]
-> = {
-  reminders: ["dueDate", "title"],
-  tags: ["title"],
-  attachments: ["filename", "dateUploaded", "size"],
-  colors: ["title"],
-  notebooks: ["title", "dateDeleted", "dateEdited"],
-  notes: ["title", "dateDeleted", "dateEdited"],
-
-  content: [],
-  notehistory: [],
-  relations: [],
-  sessioncontent: [],
-  settings: [],
-  shortcuts: [],
-  vaults: [],
-  monographs: [],
-  inboxitemshistory: []
-};
-
-function sanitizeSortOptions(type: keyof DatabaseSchema, options: SortOptions) {
-  const validFields = [...VALID_SORT_OPTIONS[type], ...BASE_FIELDS];
-  if (!validFields.includes(options.sortBy)) options.sortBy = validFields[0];
-  return options;
-}
+    function sanitizeSortOptions(type: keyof DatabaseSchema, options: SortOptions) {
+      const validFields = [...VALID_SORT_OPTIONS[type], ...BASE_FIELDS];
+      if (!validFields.includes(options.sortBy)) options.sortBy = validFields[0];
+      return options;
+    }

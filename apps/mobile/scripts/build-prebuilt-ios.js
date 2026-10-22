@@ -73,7 +73,12 @@ function libVersion(npmName) {
 }
 
 function rnVersion() {
-  const pkg = path.join(mobileDir, "node_modules", "react-native", "package.json");
+  const pkg = path.join(
+    mobileDir,
+    "node_modules",
+    "react-native",
+    "package.json"
+  );
   return fs.existsSync(pkg) ? readJson(pkg).version : "";
 }
 
@@ -109,10 +114,13 @@ function podVersions(pods) {
   const lockPath = path.join(iosDir, "Podfile.lock");
   if (!fs.existsSync(lockPath)) return "";
   const lock = fs.readFileSync(lockPath, "utf8");
-  const podsSection = (lock.match(/^PODS:\n([\s\S]*?)\n\n[A-Z]/m) || [])[1] || "";
+  const podsSection =
+    (lock.match(/^PODS:\n([\s\S]*?)\n\n[A-Z]/m) || [])[1] || "";
   return pods
     .map((pod) => {
-      const match = podsSection.match(new RegExp(`^  - ${pod} \\(([^)]+)\\):`, "m"));
+      const match = podsSection.match(
+        new RegExp(`^  - ${pod} \\(([^)]+)\\):`, "m")
+      );
       return `${pod}:${match ? match[1] : "?"}`;
     })
     .join(",");
@@ -166,7 +174,8 @@ function buildSettingsFor(lib, slice) {
   const settings = {};
   if (lib.swift) {
     settings.BUILD_LIBRARY_FOR_DISTRIBUTION = "YES";
-    settings.OTHER_SWIFT_FLAGS = "$(inherited) -no-verify-emitted-module-interface";
+    settings.OTHER_SWIFT_FLAGS =
+      "$(inherited) -no-verify-emitted-module-interface";
   }
   if (slice.sdk === "iphonesimulator") {
     settings.EXCLUDED_ARCHS = "";
@@ -183,9 +192,14 @@ function snapshotRealState() {
     path.join(podsDir, "ReactNativeDependencies", ".last_build_configuration")
   ];
   for (const marker of markers) {
-    if (fs.existsSync(marker)) state.markers[marker] = fs.readFileSync(marker, "utf8");
+    if (fs.existsSync(marker))
+      state.markers[marker] = fs.readFileSync(marker, "utf8");
   }
-  const frameworkDir = path.join(podsDir, "React-Core-prebuilt", "React.xcframework");
+  const frameworkDir = path.join(
+    podsDir,
+    "React-Core-prebuilt",
+    "React.xcframework"
+  );
   if (fs.existsSync(frameworkDir)) {
     for (const slice of fs.readdirSync(frameworkDir)) {
       const binary = path.join(frameworkDir, slice, "React.framework", "React");
@@ -253,7 +267,9 @@ function build(npmName, config) {
     }
     args.push("build");
 
-    console.log(`[BUILD] ${pod} ${config} ${slice.sdk}/${slice.archs.join("+")}`);
+    console.log(
+      `[BUILD] ${pod} ${config} ${slice.sdk}/${slice.archs.join("+")}`
+    );
     execFileSync("xcodebuild", args, { cwd: buildDir, stdio: "inherit" });
 
     const productsDir = path.join(derivedData, "Build", "Products");
@@ -275,22 +291,34 @@ function build(npmName, config) {
   const xcframework = path.join(outDir, `${pod}.xcframework`);
   const xcfArgs = [];
   for (const { slice, staticLib, podProducts } of built) {
-    const headersDir = path.join(workDir, "headers", `${slice.sdk}-${slice.archs.join("_")}`);
+    const headersDir = path.join(
+      workDir,
+      "headers",
+      `${slice.sdk}-${slice.archs.join("_")}`
+    );
     fs.mkdirSync(headersDir, { recursive: true });
     if (fs.existsSync(publicHeaders)) {
-      execFileSync("cp", ["-RL", `${publicHeaders}/.`, headersDir]);
+      execFileSync("cp", ["-R", `${publicHeaders}/.`, headersDir]);
     }
     if (lib.swift) {
       const swiftmodule = path.join(podProducts, `${pod}.swiftmodule`);
       if (fs.existsSync(swiftmodule)) {
-        execFileSync("cp", ["-R", swiftmodule, path.join(headersDir, `${pod}.swiftmodule`)]);
+        execFileSync("cp", [
+          "-R",
+          swiftmodule,
+          path.join(headersDir, `${pod}.swiftmodule`)
+        ]);
       }
     }
     xcfArgs.push("-library", staticLib, "-headers", headersDir);
   }
-  execFileSync("xcodebuild", ["-create-xcframework", ...xcfArgs, "-output", xcframework], {
-    stdio: "inherit"
-  });
+  execFileSync(
+    "xcodebuild",
+    ["-create-xcframework", ...xcfArgs, "-output", xcframework],
+    {
+      stdio: "inherit"
+    }
+  );
 
   execFileSync("zip", ["-qry", target, `${pod}.xcframework`], { cwd: outDir });
   fs.rmSync(workDir, { recursive: true, force: true });
@@ -338,8 +366,12 @@ function main() {
     const configs = targetConfig ? [targetConfig] : DEFAULT_CONFIGURATIONS;
     const lib = LIBRARIES[npmName];
     for (const config of configs) {
-      if (!CONFIGURATIONS[config]) throw new Error(`Unknown configuration: ${config}`);
-      const target = path.join(prebuiltDir, artifactName(lib, config, computeHash(npmName)));
+      if (!CONFIGURATIONS[config])
+        throw new Error(`Unknown configuration: ${config}`);
+      const target = path.join(
+        prebuiltDir,
+        artifactName(lib, config, computeHash(npmName))
+      );
       if (isValidArtifact(target)) {
         console.log(`[SKIP] ${path.basename(target)} already exists`);
         continue;
@@ -378,4 +410,11 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { computeHash, listArtifacts, LIBRARIES, artifactName, prebuiltDir, cacheDir };
+module.exports = {
+  computeHash,
+  listArtifacts,
+  LIBRARIES,
+  artifactName,
+  prebuiltDir,
+  cacheDir
+};

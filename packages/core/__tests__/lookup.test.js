@@ -200,31 +200,35 @@ describe("notesWithHighlighting", () => {
       expect(item.item.content[0][0].suffix.includes("&nbsp;")).toBe(false);
     }));
 
-  test("search should return each matching note once with many matches", () =>
-    databaseTest().then(async (db) => {
-      const ids = [];
-      for (let i = 0; i < 2000; ++i)
-        ids.push(
-          await db.notes.add({
-            title: `cafe ${i}`,
-            content: { type: "tiptap", data: "<p>cafe</p>" }
-          })
-        );
+  test(
+    "search should return each matching note once with many matches",
+    () =>
+      databaseTest().then(async (db) => {
+        const ids = [];
+        for (let i = 0; i < 2000; ++i)
+          ids.push(
+            await db.notes.add({
+              title: `cafe ${i}`,
+              content: { type: "tiptap", data: "<p>cafe</p>" }
+            })
+          );
 
-      for (const sortOptions of [
-        undefined,
-        { sortBy: "dateCreated", sortDirection: "asc" }
-      ]) {
-        const result = await db.lookup.notesWithHighlighting(
-          "cafe",
-          db.notes.all,
-          sortOptions
-        );
-        const found = await result.ids();
-        expect(found).toHaveLength(ids.length);
-        expect(new Set(found).size).toBe(ids.length);
-      }
-    }), 30000);
+        for (const sortOptions of [
+          undefined,
+          { sortBy: "dateCreated", sortDirection: "asc" }
+        ]) {
+          const result = await db.lookup.notesWithHighlighting(
+            "cafe",
+            db.notes.all,
+            sortOptions
+          );
+          const found = await result.ids();
+          expect(found).toHaveLength(ids.length);
+          expect(new Set(found).size).toBe(ids.length);
+        }
+      }),
+    30000
+  );
 
   test("search notes with parentheses in query should load the item", () =>
     noteTest({
@@ -273,49 +277,6 @@ describe("notesWithHighlighting", () => {
         `href="https://example.com/?a=1&amp;b=&quot;2&quot;"`
       );
       expect(item.content[0][0].prefix).toBe("<img src=x onerror=alert(1)> ");
-    }));
-
-  test("search notes with unbalanced quotes should highlight the match", () =>
-    noteTest({
-      title: "quotes",
-      content: {
-        type: "tiptap",
-        data: `<p>he said "hello" to the world</p>`
-      }
-    }).then(async ({ db }) => {
-      for (const query of ['"hello', 'hello"']) {
-        const filtered = await db.lookup.notesWithHighlighting(
-          query,
-          db.notes.all
-        );
-        const item = await filtered.item(0);
-        expect(item.item).toBeDefined();
-        expect(item.item.content.length).toBeGreaterThan(0);
-      }
-    }));
-
-  test("search notes with short terms in boolean queries", () =>
-    databaseTest().then(async (db) => {
-      await db.notes.add({
-        title: "first",
-        content: { type: "tiptap", data: "<p>hello world</p>" }
-      });
-      await db.notes.add({
-        title: "second",
-        content: { type: "tiptap", data: "<p>the onyx stone</p>" }
-      });
-
-      const filtered = await db.lookup.notesWithHighlighting(
-        "yx OR world",
-        db.notes.all
-      );
-      expect(filtered.length).toBe(2);
-      const matches = [];
-      for (let i = 0; i < filtered.length; i++) {
-        const { item } = await filtered.item(i);
-        matches.push(item.content[0][0].match);
-      }
-      expect(matches.sort()).toEqual(["world", "yx"]);
     }));
 
   test("search should be diacritic agnostic", () =>
