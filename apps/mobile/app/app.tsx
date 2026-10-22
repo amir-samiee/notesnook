@@ -16,10 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-<<<<<<< HEAD
-=======
 import { parseInternalLink } from "@notesnook/core";
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 import {
   ScopedThemeProvider,
   THEME_COMPATIBILITY_VERSION,
@@ -43,10 +40,6 @@ import {
   launchNewNoteTab,
   registerAppShortcuts
 } from "./hooks/use-shortcut-manager";
-<<<<<<< HEAD
-import Shortcuts from "react-native-actions-shortcuts";
-import { parseInternalLink } from "@notesnook/core";
-=======
 import { RootNavigation } from "./navigation/navigation-stack";
 import { NotePreviewConfigure } from "./screens/note-preview-configure";
 import { themeTrpcClient } from "./screens/settings/theme-selector";
@@ -56,7 +49,6 @@ import { TipManager } from "./services/tip-manager";
 import { useSettingStore } from "./stores/use-setting-store";
 import { changeSystemBarColors, useThemeStore } from "./stores/use-theme-store";
 import { useUserStore } from "./stores/use-user-store";
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 I18nManager.allowRTL(false);
 I18nManager.forceRTL(false);
 I18nManager.swapLeftAndRightInRTL(false);
@@ -155,11 +147,11 @@ export const withTheme = (
             if (theme) {
               theme.colorScheme === "dark"
                 ? useThemeStore.setState({
-                  darkTheme: theme
-                })
+                    darkTheme: theme
+                  })
                 : useThemeStore.setState({
-                  lightTheme: theme
-                });
+                    lightTheme: theme
+                  });
             }
           })
           .catch(() => {

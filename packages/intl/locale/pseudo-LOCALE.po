@@ -4504,57 +4504,6 @@ msgstr ""
 #: src/strings.ts:1931
 msgid "Languages"
 msgstr "Languages"
-<<<<<<< HEAD
-
-#: src/strings.ts:2709
-msgid "Last"
-msgstr "Last"
-
-#: src/strings.ts:2029
-msgid "Last edited at"
-msgstr "Last edited at"
-
-#: src/strings.ts:2469
-msgid "Last used on"
-msgstr "Last used on"
-
-#: src/strings.ts:2705
-msgid "Last week"
-msgstr "Last week"
-
-#: src/strings.ts:2719
-msgid "Last: {time}"
-msgstr "Last: {time}"
-
-#: src/strings.ts:537
-msgid "Later"
-msgstr "Later"
-
-#: src/strings.ts:589
-msgid "Latest first"
-msgstr "Latest first"
-
-#: src/strings.ts:161
-msgid "Learn how this works."
-msgstr "Learn how this works."
-
-#: src/strings.ts:520
-msgid "Learn more"
-msgstr "Learn more"
-
-#: src/strings.ts:888
-msgid "Learn more about Monographs"
-msgstr "Learn more about Monographs"
-
-#: src/strings.ts:245
-msgid "Learn more about Notesnook Monograph"
-msgstr "Learn more about Notesnook Monograph"
-
-#: src/strings.ts:592
-msgid "Least relevant first"
-msgstr "Least relevant first"
-
-=======
 
 #: src/strings.ts:2709
 msgid "Last"
@@ -4612,7 +4561,6 @@ msgstr "Learn more about Notesnook Monograph"
 msgid "Least relevant first"
 msgstr "Least relevant first"
 
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 #: src/strings.ts:2729
 msgid "Legacy backup"
 msgstr "Legacy backup"
@@ -5241,52 +5189,6 @@ msgstr "Newly created notes will be uncategorized"
 msgid "Next"
 msgstr "Next"
 
-<<<<<<< HEAD
-#: src/strings.ts:2174
-msgid "Next match"
-msgstr "Next match"
-
-#: src/strings.ts:2857
-msgid "Next month"
-msgstr ""
-
-#: src/strings.ts:2220
-msgid "Next tab"
-msgstr "Next tab"
-
-#: src/strings.ts:2858
-msgid "Next year"
-msgstr ""
-
-#: src/strings.ts:497
-msgid "No"
-msgstr "No"
-
-#: src/strings.ts:2810
-msgid "No active subscription found"
-msgstr ""
-
-#: src/strings.ts:783
-msgid "No application found to open {fileToOpen}"
-msgstr "No application found to open {fileToOpen}"
-
-#: src/strings.ts:77
-msgid "No attachments."
-msgstr "No attachments."
-
-#: src/strings.ts:333
-msgid "No backups found"
-msgstr "No backups found"
-
-#: src/strings.ts:251
-msgid "No blocks linked"
-msgstr "No blocks linked"
-
-#: src/strings.ts:714
-msgid "No color selected"
-msgstr "No color selected"
-
-=======
 #: src/strings.ts:3280
 msgid "Next full backup: {date}"
 msgstr ""
@@ -5339,7 +5241,6 @@ msgstr "No blocks linked"
 msgid "No color selected"
 msgstr "No color selected"
 
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 #: src/strings.ts:1132
 msgid "No directory selected"
 msgstr "No directory selected"
@@ -6016,13 +5917,8 @@ msgid "Please enter your vault password to continue"
 msgstr "Please enter your vault password to continue"
 
 #: src/strings.ts:1440
-<<<<<<< HEAD
-msgid "Please grant notifications permission to add new reminders."
-msgstr "Please grant notifications permission to add new reminders."
-=======
 msgid "Please grant notifications permission to receive reminder notifications."
 msgstr "Please grant notifications permission to receive reminder notifications."
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 
 #: src/strings.ts:2510
 msgid "Please login to download attachments."

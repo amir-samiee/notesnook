@@ -216,9 +216,8 @@ export const strings = {
     collection: string;
     current: number;
   }) =>
-    t`Migrating ${progress ? `${progress?.collection}` : ""} ${
-      progress ? `(${progress.current}/${progress.total}) ` : ""
-    }... please wait`,
+    t`Migrating ${progress ? `${progress?.collection}` : ""} ${progress ? `(${progress.current}/${progress.total}) ` : ""
+      }... please wait`,
   migrationError: () =>
     t`An error occurred while migrating your data. You can logout of your account and try to relogin. However this is not recommended as it may result in some data loss if your data was not synced.`,
   migrationAppReset: () =>
@@ -580,8 +579,8 @@ $day$: Current day (eg. Monday)`,
   ) => {
     return mode in REMINDER_NOTIFICATION_MODES
       ? REMINDER_NOTIFICATION_MODES[
-          mode as keyof typeof REMINDER_NOTIFICATION_MODES
-        ]()
+        mode as keyof typeof REMINDER_NOTIFICATION_MODES
+      ]()
       : mode;
   },
   oldNew: () => t`Old - new`,
@@ -904,9 +903,8 @@ $day$: Current day (eg. Monday)`,
   mfaSmsDesc: () =>
     t`Notesnook will send you an SMS with a 2FA code when prompted`,
   mfaSmsSubtitle: (phoneNumber?: string) =>
-    t`Please confirm your identity by entering the authentication code sent to ${
-      phoneNumber ? phoneNumber : "your registered phone number."
-    }.`,
+    t`Please confirm your identity by entering the authentication code sent to ${phoneNumber ? phoneNumber : "your registered phone number."
+      }.`,
   mfaSmsInstructions: () => t`It may take a minute to receive your code.`,
   mfaSmsSelector: () => t`Don't have access to your phone number?`,
   mfaRecoveryCodeSubtitle: () =>
@@ -2343,9 +2341,8 @@ Use this if changes from other devices are not appearing on this device. This wi
   trialPlanConditions: [
     (duration: number) => t`Free ${duration} day trial, cancel any time`,
     (platform: "ios" | "android") =>
-      t`${
-        platform === "ios" ? "Apple" : "Google"
-      } will remind you before your trial ends`
+      t`${platform === "ios" ? "Apple" : "Google"
+        } will remind you before your trial ends`
   ],
   purchase: () => t`Purchase`,
   subscribe: () => t`Subscribe`,
@@ -3274,9 +3271,6 @@ Continue without attachments?`,
   waitForPreviousDownloadToFinish: () =>
     t`Please wait for the previous download to finish or cancel it.`,
   checkingAttachmentsProgress: (current: number, total: number) =>
-<<<<<<< HEAD
-    t`Checking attachments (${current}/${total})`
-=======
     t`Checking attachments (${current}/${total})`,
   nextBackupOn: (date: string, type: "full" | "partial") =>
     type === "full"
@@ -3286,5 +3280,4 @@ Continue without attachments?`,
     type === "full"
       ? t`Last full backup: ${date}`
       : t`Last partial backup: ${date}`
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 };

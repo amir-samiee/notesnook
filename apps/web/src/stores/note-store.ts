@@ -58,24 +58,20 @@ class NoteStore extends BaseStore<NoteStore> {
   };
 
   setContext = async (context?: Context) => {
-<<<<<<< HEAD
-    this.set({ context, contextNotes: undefined });
-=======
     if (!isSameContext(this.get().context, context))
       this.set({ context, contextNotes: undefined });
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
     const groupOptions =
       context?.type === "notebook" ||
-      context?.type === "tag" ||
-      context?.type === "color"
+        context?.type === "tag" ||
+        context?.type === "color"
         ? db.settings.getGroupOptionsById(context.id, context.type)
         : db.settings.getGroupOptions(
-            context?.type === "favorite"
-              ? "favorites"
-              : context?.type === "archive"
+          context?.type === "favorite"
+            ? "favorites"
+            : context?.type === "archive"
               ? "archive"
               : "notes"
-          );
+        );
 
     this.set({
       context,

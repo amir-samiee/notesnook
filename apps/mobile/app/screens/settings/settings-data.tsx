@@ -86,37 +86,6 @@ import { SettingSection } from "./types";
 import { getTimeLeft } from "./user-section";
 import { useShallow } from "zustand/react/shallow";
 
-<<<<<<< HEAD
-export function getSettingsGroups(): SettingSection[] {
-  return [
-    {
-      id: "account-local",
-      name: strings.account(),
-      useHook: () => useUserStore((state) => state.user),
-      hidden: (current) => !!current,
-      sections: [
-        {
-          id: "delete-data",
-          name: strings.deleteData(),
-          icon: "delete",
-          description: strings.deleteAccountDesc(),
-          modifer: () => {
-            presentDialog({
-              title: strings.deleteData(),
-              paragraph: strings.irreverisibleAction(),
-              positiveType: "errorShade",
-              positiveText: strings.deleteData(),
-              positivePress: async () => {
-                await PremiumService.setPremiumStatus();
-                await BiometricService.resetCredentials();
-                MMKV.clearStore();
-                resetTabStore();
-                clearAllStores();
-                Navigation.queueRoutesForUpdate();
-                SettingsService.resetSettings();
-                db.reset();
-
-=======
 const formatBackupDate = (date: number) =>
   formatDate(date, {
     type: "date-time",
@@ -153,7 +122,6 @@ export function getSettingsGroups(): SettingSection[] {
                 SettingsService.resetSettings();
                 db.reset();
 
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
                 setImmediate(() => {
                   refreshAllStores();
                   eSendEvent(eAfterSync);
@@ -189,12 +157,8 @@ export function getSettingsGroups(): SettingSection[] {
             return (
               strings.subscriptionProviderInfo[
                 user?.subscription?.provider
-<<<<<<< HEAD
-              ]?.title() || `Unknown provider id: ${user?.subscription?.provider}`
-=======
               ]?.title() ||
               `Unknown provider id: ${user?.subscription?.provider}`
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
             );
           },
           icon: "credit-card",
@@ -257,11 +221,7 @@ export function getSettingsGroups(): SettingSection[] {
                 : status === SubscriptionStatus.ACTIVE
                   ? strings.subRenewOn(expiryDate)
                   : status === SubscriptionStatus.CANCELED ||
-<<<<<<< HEAD
-                    status === SubscriptionStatus.PAUSED
-=======
                       status === SubscriptionStatus.PAUSED
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
                     ? strings.subEndsOn(expiryDate)
                     : status === SubscriptionStatus.EXPIRED
                       ? subscriptionDaysLeft.time < -3
@@ -282,12 +242,8 @@ export function getSettingsGroups(): SettingSection[] {
           },
           useHook: () =>
             useUserStore(
-<<<<<<< HEAD
-              (state) => state.user?.subscription?.plan === SubscriptionPlan.FREE
-=======
               (state) =>
                 state.user?.subscription?.plan === SubscriptionPlan.FREE
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
             ),
           icon: "gift",
           modifer: () => {
@@ -303,13 +259,9 @@ export function getSettingsGroups(): SettingSection[] {
                     name: "code",
                     placeholder: strings.code(),
                     ref: React.createRef<TextInput | null>(),
-<<<<<<< HEAD
-                    validators: [validators.required(strings.giftCodeRequired())]
-=======
                     validators: [
                       validators.required(strings.giftCodeRequired())
                     ]
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
                   }
                 ],
                 onFormSubmit: async (form) => {
@@ -1274,12 +1226,8 @@ export function getSettingsGroups(): SettingSection[] {
                 const _current = current as VaultStatusType;
                 return !_current?.exists || !_current?.isBiometryAvailable;
               },
-<<<<<<< HEAD
-              getter: (current) => (current as VaultStatusType)?.biometryEnrolled,
-=======
               getter: (current) =>
                 (current as VaultStatusType)?.biometryEnrolled,
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
               modifer: (current) => {
                 const _current = current as VaultStatusType;
                 const isRevoking = _current.biometryEnrolled;
@@ -1339,13 +1287,9 @@ export function getSettingsGroups(): SettingSection[] {
 
                 if (!SettingsService.getProperty("appLockEnabled")) {
                   if (
-<<<<<<< HEAD
-                    !SettingsService.getProperty("appLockHasPasswordSecurity") &&
-=======
                     !SettingsService.getProperty(
                       "appLockHasPasswordSecurity"
                     ) &&
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
                     (await BiometricService.isBiometryAvailable())
                   ) {
                     SettingsService.setProperty("biometricsAuthEnabled", true);
@@ -1409,13 +1353,9 @@ export function getSettingsGroups(): SettingSection[] {
                   ? strings.changeAppLockPinDesc()
                   : strings.changeAppLockPasswordDesc(),
               hidden: () => {
-<<<<<<< HEAD
-                return !SettingsService.getProperty("appLockHasPasswordSecurity");
-=======
                 return !SettingsService.getProperty(
                   "appLockHasPasswordSecurity"
                 );
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
               },
               property: "appLockHasPasswordSecurity",
               modifer: () => {
@@ -1433,13 +1373,9 @@ export function getSettingsGroups(): SettingSection[] {
                   ? strings.removeAppLockPinDesc()
                   : strings.removeAppLockPasswordDesc(),
               hidden: () => {
-<<<<<<< HEAD
-                return !SettingsService.getProperty("appLockHasPasswordSecurity");
-=======
                 return !SettingsService.getProperty(
                   "appLockHasPasswordSecurity"
                 );
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
               },
               property: "appLockHasPasswordSecurity",
               modifer: () => {
@@ -1490,9 +1426,6 @@ export function getSettingsGroups(): SettingSection[] {
             {
               id: "backup-now",
               name: strings.backupNow(),
-<<<<<<< HEAD
-              description: strings.backupNowDesc(),
-=======
               property: "lastBackupDate",
               description: () => {
                 const last = SettingsService.get().lastBackupDate;
@@ -1503,7 +1436,6 @@ export function getSettingsGroups(): SettingSection[] {
                   "partial"
                 )}`;
               },
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
               modifer: async () => {
                 const user = useUserStore.getState().user;
                 if (!user || SettingsService.getProperty("encryptedBackup")) {
@@ -1517,9 +1449,6 @@ export function getSettingsGroups(): SettingSection[] {
             {
               id: "backup-now-with-attachments",
               name: strings.backupNowWithAttachments(),
-<<<<<<< HEAD
-              description: strings.backupNowWithAttachmentsDesc(),
-=======
               property: "lastFullBackupDate",
               description: () => {
                 const last = SettingsService.get().lastFullBackupDate;
@@ -1530,7 +1459,6 @@ export function getSettingsGroups(): SettingSection[] {
                   "full"
                 )}`;
               },
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
               hidden: () => !useUserStore.getState().user,
               modifer: async () => {
                 const user = useUserStore.getState().user;
@@ -1548,9 +1476,6 @@ export function getSettingsGroups(): SettingSection[] {
               id: "auto-backups",
               type: "component",
               name: strings.automaticBackups(),
-<<<<<<< HEAD
-              description: strings.automaticBackupsDesc(),
-=======
               useHook: () =>
                 useSettingStore(
                   useShallow((state) => [
@@ -1570,7 +1495,6 @@ export function getSettingsGroups(): SettingSection[] {
                     )}`
                   : strings.automaticBackupsDesc();
               },
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
               component: "autobackups"
             },
             {
@@ -1578,11 +1502,6 @@ export function getSettingsGroups(): SettingSection[] {
               type: "component",
               hidden: () => !useUserStore.getState().user,
               name: strings.automaticBackupsWithAttachments(),
-<<<<<<< HEAD
-              description: [
-                ...strings.automaticBackupsWithAttachmentsDesc()
-              ].join("\n"),
-=======
               useHook: () =>
                 useSettingStore(
                   useShallow((state) => [
@@ -1605,7 +1524,6 @@ export function getSettingsGroups(): SettingSection[] {
                     )}`
                   : base;
               },
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
               component: "autobackupsattachments"
             },
             {
@@ -1885,7 +1803,6 @@ export function getSettingsGroups(): SettingSection[] {
               /* empty */
             });
           }
-<<<<<<< HEAD
         },
         {
           id: "join-mastodon",
@@ -1980,102 +1897,6 @@ export function getSettingsGroups(): SettingSection[] {
           description: strings.downloadOnDesktopDesc()
         },
         {
-=======
-        },
-        {
-          id: "join-mastodon",
-          name: strings.joinMastodon(),
-          description: strings.joinMastodonDesc(),
-          icon: "mastodon",
-          modifer: () => {
-            Linking.openURL("https://fosstodon.org/@notesnook").catch(
-              console.log
-            );
-          }
-        },
-        {
-          id: "join-twitter",
-          name: strings.followOnX(),
-          description: strings.followOnXDesc(),
-          icon: "twitter",
-          modifer: () => {
-            Linking.openURL("https://twitter.com/notesnook").catch(() => {
-              /* empty */
-            });
-          }
-        },
-        {
-          id: "join-discord",
-          name: strings.joinDiscord(),
-          icon: "discord",
-          modifer: async () => {
-            Linking.openURL("https://discord.gg/zQBK97EE22").catch(() => {
-              /* empty */
-            });
-          },
-          description: strings.joinDiscordDesc()
-        }
-      ]
-    },
-    {
-      id: "legal",
-      name: strings.legal(),
-      sections: [
-        {
-          id: "tos",
-          name: strings.tos(),
-          icon: "briefcase-outline",
-          modifer: async () => {
-            try {
-              await Linking.openURL("https://notesnook.com/tos");
-            } catch (e) {
-              console.error(e);
-            }
-          },
-          description: strings.tosDesc()
-        },
-        {
-          id: "privacy-policy",
-          name: strings.privacyPolicy(),
-          icon: "shield-outline",
-          modifer: async () => {
-            try {
-              await Linking.openURL("https://notesnook.com/privacy");
-            } catch (e) {
-              console.error(e);
-            }
-          },
-          description: strings.privacyPolicyDesc()
-        },
-        {
-          id: "licenses",
-          name: strings.licenses(),
-          type: "screen",
-          component: "licenses",
-          description: strings.ossLibs(),
-          icon: "open-source-initiative"
-        }
-      ]
-    },
-    {
-      id: "about",
-      name: strings.about(),
-      sections: [
-        {
-          id: "download",
-          name: strings.downloadOnDesktop(),
-          icon: "monitor",
-          modifer: async () => {
-            try {
-              await Linking.openURL("https://notesnook.com/downloads");
-            } catch (e) {
-              console.error(e);
-            }
-          },
-          description: strings.downloadOnDesktopDesc()
-        },
-        {
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
           id: "roadmap",
           name: strings.roadmap(),
           icon: "chart-timeline",
@@ -2124,16 +1945,6 @@ export function useSettingsGroups(): SettingSection[] {
   return React.useMemo(() => getSettingsGroups(), [appLanguage]);
 }
 
-<<<<<<< HEAD
-export const settingsGroups: SettingSection[] = new Proxy([] as SettingSection[], {
-  get(target, prop, receiver) {
-    const groups = getSettingsGroups();
-    const value = Reflect.get(groups, prop, groups);
-    return typeof value === "function" ? value.bind(groups) : value;
-  }
-});
-
-=======
 export const settingsGroups: SettingSection[] = new Proxy(
   [] as SettingSection[],
   {
@@ -2144,4 +1955,3 @@ export const settingsGroups: SettingSection[] = new Proxy(
     }
   }
 );
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
