@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-/* eslint-disable @typescript-eslint/no-var-requires */
-=======
 /*
 This file is part of the Notesnook project (https://notesnook.com/)
 
@@ -19,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 import "./globals.js";
 import NetInfo from "@react-native-community/netinfo";
 import React from "react";

@@ -70,12 +70,6 @@ function createFeature<A extends FeatureAvailability>(
       feature.error ??
       ((l: Limit): string =>
         typeof l.caption === "number"
-<<<<<<< HEAD
-          ? `You have reached your limit of ${l.caption
-          } ${feature.title.toLowerCase()}.`
-          : `${feature.title} is not available on this plan.`)
-  } as unknown as Feature<CaptionsFromAvailability<A>>;
-=======
           ? strings.reachedLimitOf(l.caption, feature.title.toLowerCase())
           : strings.featureNotAvailableOnPlan(feature.title))
   };
@@ -87,7 +81,6 @@ function createFeature<A extends FeatureAvailability>(
     configurable: true
   });
   return f as unknown as Feature<CaptionsFromAvailability<A>>;
->>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 }
 
 function createLimit<
