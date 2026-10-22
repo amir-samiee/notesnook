@@ -184,6 +184,32 @@ test("note title with headline format should keep generating headline title unti
     expect(note?.title).toBe("not delicious anymore");
   }));
 
+test("note title with headline format should update on every headline change", () =>
+  noteTest().then(async ({ db }) => {
+    await db.settings.setTitleFormat("$headline$");
+    const id = await db.notes.add({
+      content: { type: TEST_NOTE.content.type, data: "<p>first</p>" }
+    });
+
+    // headline unchanged: should not affect the next title update
+    await db.notes.add({
+      id,
+      content: {
+        type: TEST_NOTE.content.type,
+        data: "<p>first</p><p>body</p>"
+      }
+    });
+    expect((await db.notes.note(id))?.title).toBe("first");
+
+    for (const headline of ["second", "third", "fourth"]) {
+      await db.notes.add({
+        id,
+        content: { type: TEST_NOTE.content.type, data: `<p>${headline}</p>` }
+      });
+      expect((await db.notes.note(id))?.title).toBe(headline);
+    }
+  }));
+
 [
   ["simple p tag", "<p>headline</p>", "headline"],
   ["across multiple tags", "<h1>title</h1><ol><li>list</li></ol>", "title"],
@@ -470,6 +496,28 @@ test("note's content should follow note's localOnly property", () =>
     expect(content?.localOnly).toBe(false);
   }));
 
+test("toggling localOnly should mark the note's content as unsynced", () =>
+  noteTest().then(async ({ db, id }) => {
+    const note = await db.notes.note(id);
+    const markSynced = () =>
+      db
+        .sql()
+        .updateTable("content")
+        .set({ synced: true })
+        .where("id", "=", note.contentId!)
+        .execute();
+    const isSynced = async () =>
+      (await db.content.get(note.contentId!))?.synced;
+
+    await markSynced();
+    await db.notes.localOnly(true, id);
+    expect(await isSynced()).toBe(false);
+
+    await markSynced();
+    await db.notes.localOnly(false, id);
+    expect(await isSynced()).toBe(false);
+  }));
+
 test("grouping items where item.title is empty or undefined shouldn't throw", () => {
   expect(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -736,6 +784,41 @@ for (const group of groups) {
       }));
   }
 }
+
+test("natural sorting of numbered note titles", () =>
+  databaseTest().then(async (db) => {
+    const titles = [
+      "Lesson 10",
+      "Lesson 1",
+      "Lesson 2",
+      "10. Intro",
+      "1. Intro",
+      "2. Intro"
+    ];
+    for (const title of titles) {
+      await db.notes.add({ title });
+    }
+
+    const asc = await db.notes.all.grouped({
+      groupBy: "none",
+      sortBy: "title",
+      sortDirection: "asc"
+    });
+    const ascTitles: string[] = [];
+    for (let i = 0; i < asc.length; i++) {
+      const item = await asc.item(i);
+      if (item.item) ascTitles.push(item.item.title);
+    }
+
+    expect(ascTitles).toEqual([
+      "1. Intro",
+      "2. Intro",
+      "10. Intro",
+      "Lesson 1",
+      "Lesson 2",
+      "Lesson 10"
+    ]);
+  }));
 
 test("get archived notes", () =>
   noteTest().then(async ({ db, id }) => {

@@ -1437,7 +1437,7 @@ For example:
   unableToSend2faCode: () => t`Unable to send 2FA code`,
   emailOrPasswordIncorrect: () => t`Email or password incorrect`,
   noNotificationPermission: () =>
-    t`Please grant notifications permission to add new reminders.`,
+    t`Please grant notifications permission to receive reminder notifications.`,
   selectDayError: () => t`Please select the day to repeat the reminder on`,
   dateError: () => t`Reminder time cannot be earlier than the current time.`,
   failedToDecryptBackup: () => t`Failed to decrypt backup`,
@@ -3274,5 +3274,17 @@ Continue without attachments?`,
   waitForPreviousDownloadToFinish: () =>
     t`Please wait for the previous download to finish or cancel it.`,
   checkingAttachmentsProgress: (current: number, total: number) =>
+<<<<<<< HEAD
     t`Checking attachments (${current}/${total})`
+=======
+    t`Checking attachments (${current}/${total})`,
+  nextBackupOn: (date: string, type: "full" | "partial") =>
+    type === "full"
+      ? t`Next full backup: ${date}`
+      : t`Next partial backup: ${date}`,
+  lastBackupOn: (date: string, type: "full" | "partial") =>
+    type === "full"
+      ? t`Last full backup: ${date}`
+      : t`Last partial backup: ${date}`
+>>>>>>> 5059648202b776593d19bbd827e679986a3a44e7
 };

@@ -339,13 +339,13 @@ export class SQLCollection<
       const rows = (await this.db()
         .selectFrom<keyof DatabaseSchema>(this.type)
         .where(isFalse("deleted"))
-        .orderBy("dateCreated asc")
+        .orderBy(sql`IFNULL(dateCreated, 0) asc`)
         .orderBy("id asc")
         .$if(lastRow !== null, (qb) =>
           qb.where(
-            (eb) => eb.refTuple("dateCreated", "id"),
-            ">",
-            (eb) => eb.tuple(lastRow!.dateCreated, lastRow!.id)
+            sql<boolean>`(IFNULL(dateCreated, 0), id) > (${
+              lastRow!.dateCreated ?? 0
+            }, ${lastRow!.id})`
           )
         )
         .selectAll()
@@ -592,13 +592,13 @@ export class FilteredSelector<T extends Item> {
 
         while (true) {
           const rows = await thisArg.filter
-            .orderBy("dateCreated asc")
+            .orderBy(sql`IFNULL(dateCreated, 0) asc`)
             .orderBy("id asc")
             .$if(lastRow !== null, (qb) =>
               qb.where(
-                (eb) => eb.refTuple("dateCreated", "id"),
-                ">",
-                (eb) => eb.tuple(lastRow.dateCreated, lastRow.id)
+                sql<boolean>`(IFNULL(dateCreated, 0), id) > (${
+                  lastRow.dateCreated ?? 0
+                }, ${lastRow.id})`
               )
             )
             .limit(thisArg.batchSize)
@@ -643,7 +643,7 @@ export class FilteredSelector<T extends Item> {
           qb = qb.orderBy(
             options.sortBy !== "title"
               ? sql`substring(ltrim(title, ' \u00a0\r\n\t\v'), 1, 1) COLLATE NOCASE`
-              : sql`ltrim(title, ' \u00a0\r\n\t\v') COLLATE NOCASE`,
+              : sql`natural_key(ltrim(title, ' \u00a0\r\n\t\v')) COLLATE NOCASE`,
             options.sortDirection
           );
         } else {
